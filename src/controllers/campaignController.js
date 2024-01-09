@@ -18,7 +18,7 @@ const getCampaignList = async (_, res) => {
 };
 
 const createCampaign = async (req, res) => {
-  const campaign = new CampaignService();
+  const campaign = CampaignService.getCampaignServiceInstance();
   const resp = await campaign.insertCampaign({
     createdBy: "creator 0",
     campaigns: {

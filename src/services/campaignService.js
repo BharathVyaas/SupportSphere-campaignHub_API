@@ -1,47 +1,13 @@
 const CampaignModel = require("../models/db/db");
+const getError = require("./errorStore");
 
 class CampaignService {
-  getError(from, ...rest) {
-    // This messages are for testing purpouse. will be changed later
-    switch (from) {
-      case "insertCampaign":
-        return {
-          type: "insertCampaign",
-          error: "returned 0 elements",
-          msg: "coudn't find element with identifer " + rest[0],
-        };
-      case "getCampaign":
-        return {
-          type: "getCampaign",
-          error: "identifier is empty",
-          msg: "must pass id or createdBy",
-        };
-      case "insertById":
-        return {
-          type: "insertByID",
-          err: "Title already exists | createdBy value is empty",
-          msg: "Trying to create a duplicate object | Didn't provide createdBy",
-        };
-      case "createCampaign":
-        return {
-          type: "createCampaign",
-          error: "invalid field",
-          msg: "createdBy value is empty",
-        };
-      case "getCampaign":
-        return {
-          type: "getCampaign",
-          error: "invalid field",
-          msg: "provided filed must be invalid",
-        };
+  static campaignServiceInstance;
 
-      case "insertByName":
-        return {
-          type: "insertByName",
-          error: "duplicate Name",
-          msg: "Trying to create a duplicate title",
-        };
-    }
+  static getCampaignServiceInstance() {
+    if (!this.campaignServiceInstance)
+      this.campaignServiceInstance = new CampaignService();
+    return this.campaignServiceInstance;
   }
 
   async getDocument({ id, createdBy }) {
@@ -69,7 +35,7 @@ class CampaignService {
       const campaignDocument = await this.getDocument({ id });
       if (campaignDocument) {
         if (this.doesTitleExist(campaign.title, campaignDocument)) {
-          return this.getError("insertById");
+          return getError("insertById", "Duplicate Object");
         }
 
         campaignDocument.campaigns.push(campaign);
@@ -81,7 +47,7 @@ class CampaignService {
         };
       }
 
-      return this.getError("insertById");
+      return getError("insertById", "Invalid Id");
     } catch (error) {
       console.error("Error finding or updating campaign document:", error);
     }
@@ -97,7 +63,7 @@ class CampaignService {
       const response = await newCampaign.save();
       return response;
     } else {
-      return this.getError("createCampain");
+      return getError("createCampain", "Empty Value");
     }
   }
 
@@ -123,7 +89,7 @@ class CampaignService {
       }
 
       if (this.doesTitleExist(campaigns.title, campaignDocument)) {
-        return this.getError("insertByName");
+        return getError("insertByName", "Duplicate Object");
       }
 
       campaignDocument.campaigns.push(campaigns);
@@ -141,7 +107,7 @@ class CampaignService {
   async insertCampaign({ campaigns, createdBy, id }) {
     const campaign = await this.getCampaign({ id, createdBy });
     if (!campaign) {
-      return this.getError("insertCampaign", id || createdBy);
+      return getError("insertCampaign", "Empty Value", id || createdBy);
     }
 
     if (id) {
@@ -156,7 +122,7 @@ class CampaignService {
   async getCampaign({ id, createdBy }) {
     try {
       if (!(id || createdBy)) {
-        return this.getError("getCampaign");
+        return getError("getCampaign");
       }
 
       if (id) {
@@ -167,11 +133,11 @@ class CampaignService {
         if (response) return response;
       }
 
-      return this.getError("getCampaign");
+      return getError("getCampaign");
     } catch (err) {
       console.error("GetCampaign: coudn't find campaign:", err);
     }
-    return this.getError("getCampaign");
+    return getError("getCampaign");
   }
 }
 
