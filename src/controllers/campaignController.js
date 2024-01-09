@@ -3,21 +3,21 @@
  *   Need To Make res.json Error Messages More Generic According To Client.
  */
 
+//
+const CampaignService = require("../services/campaignService");
+
+const CreateService = require("../services/createService");
+const ReadService = require("../services/readService");
+
 const DUMMY_DATA = {
-  createdBy: "the Creator 2",
+  createdBy: "the Creator",
   campaign: {
-    title: "great title 2",
+    title: "great title",
     image: "my_img.jpg",
     raisedAmount: 0,
     targetAmount: 100,
   },
 };
-
-//
-const CampaignService = require("../services/campaignService");
-
-const CreateService = require("../services/create");
-const ReadService = require("../services/read");
 
 // Controller for fetching the campaignhub document
 const getCampaignListController = async (_, res) => {
