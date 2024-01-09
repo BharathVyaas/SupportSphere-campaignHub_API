@@ -5,6 +5,7 @@
 
 //
 const CampaignModel = require("../models/db/db");
+const CampaignService = require("../services/campaignService");
 
 const getCampaignList = async (_, res) => {
   try {
@@ -17,57 +18,17 @@ const getCampaignList = async (_, res) => {
 };
 
 const createCampaign = async (req, res) => {
-  try {
-    const data = req.body;
-    const campaigns = {
-      title: data.title,
-      image: data.image,
-      raisedAmount: data.raisedAmount,
-      targetAmount: data.targetAmount,
-    };
-
-    let newCampaign;
-
-    const existingCampaign = await CampaignModel.findOne({
-      createdBy: data.createdBy,
-    });
-
-    if (existingCampaign) {
-      const doesTitleExist = existingCampaign.campaigns.some(
-        (campaign) => campaign.title === data.title
-      );
-
-      if (!doesTitleExist) {
-        await CampaignModel.updateOne(
-          { createdBy: data.createdBy },
-          { $push: { campaigns: campaigns } }
-        ).exec();
-
-        newCampaign = await CampaignModel.findOne({
-          createdBy: data.createdBy,
-        });
-      }
-    } else {
-      const filteredData = {
-        createdBy: data.createdBy,
-        campaigns: [campaigns],
-      };
-
-      newCampaign = new CampaignModel(filteredData);
-      await newCampaign.save();
-    }
-
-    console.log("response:", newCampaign);
-
-    res.setHeader("Content-Type", "application/json");
-
-    res.status(200).json(newCampaign);
-  } catch (err) {
-    console.error("Failed to create new Campaign:", err);
-
-    res.setHeader("Content-Type", "application/json");
-    res.status(500).json({ error: "Failed To Create", msg: err.message });
-  }
+  const campaign = new CampaignService();
+  const resp = await campaign.insertCampaign({
+    createdBy: "creator 0",
+    campaigns: {
+      title: "greate title 0",
+      image: "my_img.jpg",
+      raisedAmount: 0,
+      targetAmount: 100,
+    },
+  });
+  console.log(resp);
 };
 
 module.exports = { getCampaignList, createCampaign };
