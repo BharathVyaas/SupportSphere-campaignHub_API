@@ -73,19 +73,19 @@ class CreateService {
    * @param {Object} campaigns - The campaign data to insert.
    * @returns {Object} An Object with createdBy and the last inserted campaign.
    */
-  async _insertByName(createdBy, campaigns) {
+  async _insertByName(createdBy, campaign) {
     try {
       let campaignDocument = await getDocument({ createdBy });
       // If Document with the same creator doesn't exist, create a new Document.
       if (!campaignDocument) {
-        campaignDocument = await this._createCampaign(createdBy, campaigns);
+        campaignDocument = await this._createCampaign(createdBy, campaign);
       }
-
-      if (doesTitleExist(campaigns.title, campaignDocument)) {
+      console.log(campaign.title);
+      if (doesTitleExist(campaign.title, campaignDocument)) {
         return getError("insertByName", "Duplicate Object");
       }
 
-      campaignDocument.campaigns.push(campaigns);
+      campaignDocument.campaigns.push(campaign);
       const result = await campaignDocument.save();
 
       return {

@@ -1,5 +1,6 @@
 const CreateService = require("./create");
 const ReadService = require("./read");
+const CampaignModel = require("../models/db/db");
 
 /**
  *
@@ -12,8 +13,8 @@ class CampaignService {
   }
 
   async invoke(data) {
-    const res = await this.crud.invoke(data);
-    return res;
+    const result = await this.crud.invoke(data);
+    return result;
   }
 }
 

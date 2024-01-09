@@ -4,9 +4,9 @@
  */
 
 const DUMMY_DATA = {
-  createdBy: "a Creator",
-  campaigns: {
-    title: "dd",
+  createdBy: "the Creator 2",
+  campaign: {
+    title: "great title 2",
     image: "my_img.jpg",
     raisedAmount: 0,
     targetAmount: 100,
