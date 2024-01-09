@@ -3,15 +3,30 @@
  *   Need To Make res.json Error Messages More Generic According To Client.
  */
 
+const DUMMY_DATA = {
+  createdBy: "a Creator",
+  campaigns: {
+    title: "dd",
+    image: "my_img.jpg",
+    raisedAmount: 0,
+    targetAmount: 100,
+  },
+};
+
 //
 const CampaignService = require("../services/campaignService");
-const campaignService = CampaignService.getInstance();
+
+const CreateService = require("../services/create");
+const ReadService = require("../services/read");
 
 // Controller for fetching the campaignhub document
 const getCampaignListController = async (_, res) => {
   try {
     // Retrieve the campaign list from the database
-    const campaignList = await campaignService.getCampaignDocument();
+    const campaignService = new CampaignService(ReadService);
+    // Invoke method returns campainDocuments[]
+    const campaignList = await campaignService.invoke(res.body);
+
     res.status(200).json(campaignList);
   } catch (err) {
     console.error("Error fetching campaign list:", err);
@@ -20,18 +35,13 @@ const getCampaignListController = async (_, res) => {
 };
 
 // Controller for creating a new campaign
-const createCampaignController = async (req, res) => {
+const createCampaignController = async (_, res) => {
   try {
-    // Insert a new campaign into database using the CampaignService
-    const result = await campaignService.insertCampaign({
-      createdBy: "creator 0",
-      campaigns: {
-        title: "great title 0",
-        image: "my_img.jpg",
-        raisedAmount: 0,
-        targetAmount: 100,
-      },
-    });
+    // Insert a new campaign into database using the CreateService
+    const campaignService = new CampaignService(CreateService);
+    // Invoke method returns an object with createdBy and campaign{}
+    const result = await campaignService.invoke(DUMMY_DATA);
+
     res.status(201).json(result);
   } catch (err) {
     console.error("Error creating campaign:", err);

@@ -1,0 +1,18 @@
+// Workes on console - test for Inserting a Campaign
+
+  fetch('http://localhost:4001/campaign/campaign-create', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    createdBy: 'Creater 0',
+    title: 'great title',
+    image: 'exampleImage.jpg',
+    raisedAmount: 0,
+    targetAmount: 1000,
+  }),
+})
+  .then(response => response.json())
+  .then(campaigns => console.log(campaigns))
+  .catch(err => console.log(err));
