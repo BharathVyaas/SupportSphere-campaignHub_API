@@ -3,13 +3,13 @@ function getType(from, type) {
 }
 
 function getError(from, type, ...rest) {
-  // This messages are for testing purpouse. will be changed later
+  // These messages are for testing purposes and will be changed later
   switch (from) {
     case "insertCampaign":
       return {
         type: getType(from, type),
         error: "invalid value provided",
-        msg: "coudn't find element with identifer " + rest[0],
+        msg: "couldn't find element with identifier " + rest[0],
       };
     case "getCampaign":
       return {
@@ -20,12 +20,12 @@ function getError(from, type, ...rest) {
     case "insertById":
       return {
         type: getType(from, type),
-        err:
+        error:
           type === "Duplicate Object" ? "Title already exists" : "id not found",
         msg:
           type === "Duplicate Object"
             ? "Trying to create a duplicate object"
-            : "coudn't find document with provided id",
+            : "couldn't find document with provided id",
       };
     case "createCampaign":
       return {
@@ -37,13 +37,12 @@ function getError(from, type, ...rest) {
       return {
         type: getType(from, type),
         error: "invalid field",
-        msg: "provided filed must be invalid",
+        msg: "provided field must be invalid",
       };
-
     case "insertByName":
       return {
         type: getType(from, type),
-        err: "Name already exists",
+        error: "Name already exists",
         msg: "Trying to create a duplicate object",
       };
   }

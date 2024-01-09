@@ -4,12 +4,14 @@
  */
 
 //
-const CampaignModel = require("../models/db/db");
 const CampaignService = require("../services/campaignService");
+const campaignService = CampaignService.getInstance();
 
-const getCampaignList = async (_, res) => {
+// Controller for fetching the campaignhub document
+const getCampaignListController = async (_, res) => {
   try {
-    const campaignList = await CampaignModel.find({}).exec();
+    // Retrieve the campaign list from the database
+    const campaignList = await campaignService.getCampaignDocument();
     res.status(200).json(campaignList);
   } catch (err) {
     console.error("Error fetching campaign list:", err);
@@ -17,18 +19,24 @@ const getCampaignList = async (_, res) => {
   }
 };
 
-const createCampaign = async (req, res) => {
-  const campaign = CampaignService.getCampaignServiceInstance();
-  const resp = await campaign.insertCampaign({
-    createdBy: "creator 0",
-    campaigns: {
-      title: "greate title 0",
-      image: "my_img.jpg",
-      raisedAmount: 0,
-      targetAmount: 100,
-    },
-  });
-  console.log(resp);
+// Controller for creating a new campaign
+const createCampaignController = async (req, res) => {
+  try {
+    // Insert a new campaign into database using the CampaignService
+    const result = await campaignService.insertCampaign({
+      createdBy: "creator 0",
+      campaigns: {
+        title: "great title 0",
+        image: "my_img.jpg",
+        raisedAmount: 0,
+        targetAmount: 100,
+      },
+    });
+    res.status(201).json(result);
+  } catch (err) {
+    console.error("Error creating campaign:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
-module.exports = { getCampaignList, createCampaign };
+module.exports = { getCampaignListController, createCampaignController };
