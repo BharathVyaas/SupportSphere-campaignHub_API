@@ -1,17 +1,21 @@
 require("dotenv").config();
 const express = require("express");
+const bodyParser = require("body-parser");
 
-const CampaignModel = require("./db/db");
+const configureHelmet = require("./middlewares/helmet");
+const campaignRouter = require("./routes/campaignRoutes");
 
+// Declarations
 const app = express();
+configureHelmet(app);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
-app.get("/campaign-list", async (_, res) => {
-  const campaignList = await CampaignModel.find({}).exec();
+// Routes
+app.use("/campaign", campaignRouter);
 
-  res.status(200).json(campaignList);
-});
-
-app.use("/", (_, res) => {
+// Not Found
+app.use("/*", (_, res) => {
   res
     .status(404)
     .setHeader("Content-Type", "text/html")
