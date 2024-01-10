@@ -5,10 +5,10 @@ const CampaignModel = require("../../models/db/db");
  * Retrieves a campaign document by either id or createdBy.
  * @returns {Object} The campaign document.
  */
-async function getDocument({ id, createdBy }) {
+async function getDocument({ recordId, createdBy }) {
   try {
-    if (id) {
-      return await CampaignModel.findOne({ _id: id });
+    if (recordId) {
+      return await CampaignModel.findOne({ _id: recordId });
     }
     if (createdBy) {
       return await CampaignModel.findOne({ createdBy });
@@ -17,6 +17,32 @@ async function getDocument({ id, createdBy }) {
     console.error("Error getting campaign document:", error);
     return getError("getDocument", "Internal Server Error");
   }
+}
+
+async function getCampaign(recordId, campaignId) {
+  const document = await getDocument({ recordId });
+
+  if (!document) {
+    return {
+      type: "updateByRecordId",
+      err: "Document Not Found",
+      msg: "Couldn't find document with provided recordId",
+    };
+  }
+
+  const campaignToUpdate = document.campaigns.find(
+    (campaign) => campaign._id.toString() === campaignId
+  );
+
+  if (!campaignToUpdate) {
+    return {
+      type: "updateByRecordId",
+      err: "Campaign Not Found",
+      msg: "Couldn't find campaign with provided campaignId",
+    };
+  }
+
+  return { document, campaignToUpdate };
 }
 
 /**
@@ -30,14 +56,14 @@ function doesTitleExist(title, document) {
  * Retrieves a campaign by either id or createdBy.
  * @returns {Object} An Object with the retrieved campaign data.
  */
-async function getCampaign({ id, createdBy }) {
+async function getRecord({ recordId, createdBy }) {
   try {
-    if (!(id || createdBy)) {
+    if (!(recordId || createdBy)) {
       return getError("getCampaign", "Invalid Parameters");
     }
 
-    if (id) {
-      const response = await CampaignModel.findById(id);
+    if (recordId) {
+      const response = await CampaignModel.findById(recordId);
       if (response) return response;
     } else if (createdBy) {
       const response = await CampaignModel.findOne({ createdBy });

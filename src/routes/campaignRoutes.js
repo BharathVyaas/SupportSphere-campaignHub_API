@@ -10,4 +10,6 @@ router.get("/campaign-list", campaignController.getCampaignListController);
 // creates a new campaign in database with {createdBy: created user, campaign: [{campaign related details}]}
 router.post("/campaign-create", campaignController.createCampaignController);
 
+router.patch("/campaign-edit", campaignController.editCampaignController);
+
 module.exports = router;

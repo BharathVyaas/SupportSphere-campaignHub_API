@@ -1,17 +1,41 @@
 // Workes on console - test for Inserting a Campaign
 
+//create
+
   fetch('http://localhost:4001/campaign/campaign-create', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({
-    createdBy: 'Creater 0',
-    title: 'great title',
-    image: 'exampleImage.jpg',
+  createdBy: 'creator',
+  campaign: {
+    title: "great title 4",
+    image: "my_img.jpg",
     raisedAmount: 0,
-    targetAmount: 1000,
-  }),
+    targetAmount: 100,
+  }}),
+})
+  .then(response => response.json())
+  .then(campaigns => console.log(campaigns))
+  .catch(err => console.log(err));
+
+// edit
+
+  fetch('http://localhost:4001/campaign/campaign-edit', {
+  method: 'PATCH',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+  recordId: "659e028b3bcbc566bcac86fe",
+  campaignId: "659e027972d8a3099a0b0680",
+  campaign: {
+    title: "The great title 4",
+    image: "my_img.jpg",
+    raisedAmount: 0,
+    targetAmount: 100,
+  }}),
 })
   .then(response => response.json())
   .then(campaigns => console.log(campaigns))

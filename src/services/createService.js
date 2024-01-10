@@ -15,13 +15,13 @@ class CreateService {
 
   /**
    * Inserts a campaign by id.
-   * @param {string} id - The id of the campaign document.
+   * @param {string} recordId - The id of the campaign document.
    * @param {Object} campaign - The campaign data to insert.
    * @returns {Object} An Object with createdBy and the last inserted campaign.
    */
-  async _insertById(id, campaign) {
+  async _insertById(recordId, campaign) {
     try {
-      const campaignDocument = await getDocument({ id });
+      const campaignDocument = await getDocument({ recordId });
       if (campaignDocument) {
         if (doesTitleExist(campaign.title, campaignDocument)) {
           return getError("insertById", "Duplicate Object");
@@ -31,6 +31,7 @@ class CreateService {
         const updatedDocument = await campaignDocument.save();
 
         return {
+          recordId: campaignDocument._id,
           createdBy: campaignDocument.createdBy,
           lastInsertedCampaign: updatedDocument.campaigns.slice(-1)[0],
         };
@@ -89,6 +90,7 @@ class CreateService {
       const result = await campaignDocument.save();
 
       return {
+        recordId: campaignDocument._id,
         createdBy: campaignDocument.createdBy,
         lastInsertedCampaign: result.campaigns.slice(-1)[0],
       };
@@ -104,16 +106,16 @@ class CreateService {
    * @param {Object} campaign - The campaign data to insert.
    * @returns {Object} The result of the insertion.
    */
-  async insertCampaign({ campaign, createdBy, id }) {
-    const document = await getDocument({ id, createdBy });
+  async insertCampaign({ campaign, createdBy, recordId }) {
+    const document = await getDocument({ recordId, createdBy });
 
     if (!document) {
       if (createdBy) return await this._insertByName(createdBy, campaign);
-      return getError("insertCampaign", "Invalid Value", id || createdBy);
+      return getError("insertCampaign", "Invalid Value", recordId || createdBy);
     }
 
-    if (id) {
-      return this._insertById(id, campaign);
+    if (recordId) {
+      return this._insertById(recordId, campaign);
     } else if (createdBy) {
       return this._insertByName(createdBy, campaign);
     }

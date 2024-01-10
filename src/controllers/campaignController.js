@@ -4,28 +4,41 @@
  */
 
 //
-const CampaignService = require("../services/campaignService");
-
-const CreateService = require("../services/createService");
-const ReadService = require("../services/readService");
+const { ConcreteCommand } = require("../services/campaignService");
+// Using this approach to make code lean and more readable
+const serviceInstance = ConcreteCommand.instance;
 
 const DUMMY_DATA = {
-  createdBy: "the Creator",
+  recordId: "659e027972d8a3099a0b067e",
   campaign: {
-    title: "great title",
+    title: "great title 6",
     image: "my_img.jpg",
     raisedAmount: 0,
     targetAmount: 100,
   },
 };
 
+const DUMMY_EDIT = {
+  recordId: "659e027972d8a3099a0b067e",
+  campaignId: "659e0dbd96bdb67873085529",
+  campaign: {
+    title: "updated title again",
+    image: "my_beautiful_img.jpg",
+    raisedAmount: 0,
+    targetAmount: 100,
+  },
+};
+
+/**
+ *
+ *  READ
+ */
+
 // Controller for fetching the campaignhub document
 const getCampaignListController = async (_, res) => {
   try {
-    // Retrieve the campaign list from the database
-    const campaignService = new CampaignService(ReadService);
-    // Invoke method returns campainDocuments[]
-    const campaignList = await campaignService.invoke(res.body);
+    // Returns campaignhub_db/campaigns document
+    const campaignList = await serviceInstance.command("read", res.body);
 
     res.status(200).json(campaignList);
   } catch (err) {
@@ -34,13 +47,17 @@ const getCampaignListController = async (_, res) => {
   }
 };
 
+/**
+ *
+ *  CREATE
+ */
+
 // Controller for creating a new campaign
 const createCampaignController = async (_, res) => {
   try {
-    // Insert a new campaign into database using the CreateService
-    const campaignService = new CampaignService(CreateService);
-    // Invoke method returns an object with createdBy and campaign{}
-    const result = await campaignService.invoke(DUMMY_DATA);
+    // Require _id or createdBy to get a Document
+    // Returns a document with _id:string createdBy:string campaigns[]
+    const result = await serviceInstance.command("create", DUMMY_DATA);
 
     res.status(201).json(result);
   } catch (err) {
@@ -49,4 +66,23 @@ const createCampaignController = async (_, res) => {
   }
 };
 
-module.exports = { getCampaignListController, createCampaignController };
+/**
+ *
+ *  UPDATE
+ */
+const editCampaignController = async (_, res) => {
+  try {
+    const result = await serviceInstance.command("update", DUMMY_EDIT);
+
+    res.status(201).json(result);
+  } catch (err) {
+    console.error("Error updating campaign:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+module.exports = {
+  getCampaignListController,
+  createCampaignController,
+  editCampaignController,
+};
