@@ -36,7 +36,7 @@ class CreateService {
       return getError({ source: "insertById:campaignDocument" });
     } catch (error) {
       console.error("Error inserting campaign by id:", error);
-      return getError({ source: "insertById:caughtError" });
+      return getError({ source: "insertById:caughtError", error });
     }
   }
 
@@ -60,7 +60,7 @@ class CreateService {
       }
     } catch (error) {
       console.error("Error creating campaign document:", error);
-      return getError({ source: "createCampaign:caughtError" });
+      return getError({ source: "createCampaign:caughtError", error });
     }
   }
 
@@ -75,15 +75,9 @@ class CreateService {
       let campaignDocument = await getDocument({ createdBy });
 
       // If Document with the same creator doesn't exist, create a new Document.
-      if (!campaignDocument?.source) {
+      if (!campaignDocument || campaignDocument.source) {
         campaignDocument = await this._createCampaign(createdBy, campaign);
       }
-
-      console.log(
-        "---------------------------------------",
-        campaignDocument,
-        "---------------------------------------------"
-      );
 
       if (doesTitleExist(campaign.title, campaignDocument)) {
         return getError({ source: "insertByName:doesTitleExist" });
@@ -95,7 +89,7 @@ class CreateService {
       return campaignDocument;
     } catch (error) {
       console.error("Error inserting campaign by name:", error);
-      return getError({ source: "insertByName:caughtError" });
+      return getError({ source: "insertByName:caughtError", error });
     }
   }
 

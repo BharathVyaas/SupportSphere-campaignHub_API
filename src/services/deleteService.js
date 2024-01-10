@@ -18,7 +18,7 @@ class DeleteService {
       return result;
     } catch (error) {
       console.error("Error deleting decument:", error);
-      return getError({ source: "deleteDocument:caughtError" });
+      return getError({ source: "deleteDocument:caughtError", error });
     }
   }
 
@@ -35,7 +35,7 @@ class DeleteService {
       return result;
     } catch (error) {
       console.error("Error deleting campaign:", error);
-      return getError({ source: "deleteCampaignById:caughtError" });
+      return getError({ source: "deleteCampaignById:caughtError", error });
     }
   }
 

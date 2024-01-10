@@ -1,5 +1,5 @@
 // status codes from chatGpt
-function getError({ source, ...rest }) {
+function getError({ source, error, ...rest }) {
   // These messages are for testing purposes and will be changed later
   switch (source) {
     // ToDo check Internal Server Errors again i'm putting them just as placeHolder

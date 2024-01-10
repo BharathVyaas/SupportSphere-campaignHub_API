@@ -9,18 +9,14 @@ const CampaignModel = require("../../models/db/db");
 async function getDocument({ recordId, createdBy }) {
   try {
     if (recordId) {
-      const result = await CampaignModel.findOne({ _id: recordId });
-      if (result) return result;
-      return getError({ source: "getDocument:recordId" });
+      return await CampaignModel.findOne({ _id: recordId });
     }
     if (createdBy) {
-      const result = await CampaignModel.findOne({ createdBy });
-      if (result) return result;
-      return getError({ source: "getDocument:creatdBy" });
+      return await CampaignModel.findOne({ createdBy });
     }
   } catch (error) {
     console.error("Error getting campaign document:", error);
-    return getError({ source: "getDocument:caughtError" });
+    return getError({ source: "getDocument:caughtError", error });
   }
 }
 

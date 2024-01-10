@@ -9,9 +9,9 @@ const { ConcreteCommand } = require("../services/campaignService");
 const serviceInstance = ConcreteCommand.instance;
 
 const DUMMY_DATA = {
-  createdBy: "creator 1",
+  recordId: "659e8c809bc2a5a875624cf6",
   campaign: {
-    title: "great title",
+    title: "great title 2",
     image: "my_img.jpg",
     raisedAmount: 0,
     targetAmount: 100,
@@ -19,8 +19,7 @@ const DUMMY_DATA = {
 };
 
 const DUMMY_EDIT = {
-  recordId: "659e5853cd8f0d091ca3a66e",
-  campaignId: "659e5860bbce80ddfa06bb27",
+  campaignId: "659e8c809bc2a5a875624cf8",
   campaign: {
     title: "updated title",
     image: "beautiful_img.jpg",
@@ -30,8 +29,7 @@ const DUMMY_EDIT = {
 };
 
 const DUMMY_DELETE = {
-  recordId: "659e5853cd8f0d091ca3a66e",
-  campaignId: "659e5860bbce80ddfa06bb27",
+  createdBy: "creator",
 };
 
 /**
@@ -77,6 +75,7 @@ const createCampaignController = async (_, res) => {
  */
 const editCampaignController = async (_, res) => {
   try {
+    // Requires CampaignId and RecordId
     // Returns updated record
     const result = await serviceInstance.command("update", DUMMY_EDIT);
 

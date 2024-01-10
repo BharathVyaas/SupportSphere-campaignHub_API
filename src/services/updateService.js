@@ -27,7 +27,7 @@ class UpdateService {
       return document;
     } catch (error) {
       console.error("Error updating campaign:", error);
-      return getError({ source: "updateByRecordId:caughtError" });
+      return getError({ source: "updateByRecordId:caughtError", error });
     }
   }
 

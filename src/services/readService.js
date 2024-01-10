@@ -22,7 +22,7 @@ class ReadService {
       return documents;
     } catch (error) {
       console.error("Error retrieving campaign documents:", error);
-      return getError({ source: "getCampaignDocument:caughtError" });
+      return getError({ source: "getCampaignDocument:caughtError", error });
     }
   }
 }
