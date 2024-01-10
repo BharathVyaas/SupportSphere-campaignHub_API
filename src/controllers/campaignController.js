@@ -9,9 +9,9 @@ const { ConcreteCommand } = require("../services/campaignService");
 const serviceInstance = ConcreteCommand.instance;
 
 const DUMMY_DATA = {
-  createdBy: "creator",
+  createdBy: "creator 1",
   campaign: {
-    title: "great title 9",
+    title: "great title",
     image: "my_img.jpg",
     raisedAmount: 0,
     targetAmount: 100,

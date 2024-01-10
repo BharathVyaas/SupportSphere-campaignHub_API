@@ -18,7 +18,7 @@ class DeleteService {
       return result;
     } catch (error) {
       console.error("Error deleting decument:", error);
-      return getError("_deleteDocument", "Internal Server Error");
+      return getError({ source: "deleteDocument:caughtError" });
     }
   }
 
@@ -35,7 +35,7 @@ class DeleteService {
       return result;
     } catch (error) {
       console.error("Error deleting campaign:", error);
-      return getError("deleteCampaignById", "Internal Server Error");
+      return getError({ source: "deleteCampaignById:caughtError" });
     }
   }
 
@@ -48,11 +48,7 @@ class DeleteService {
       const result = await this._deleteCampaignById(recordId, campaignId);
       return result;
     }
-    return {
-      type: "deleteCampaign",
-      error: "Identifier is Empty",
-      msg: "must provide createdBy or (recordId and campaignId)",
-    };
+    return getError({ source: "deleteCampaign:campaignId" });
   }
 }
 

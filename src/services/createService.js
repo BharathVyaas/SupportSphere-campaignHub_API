@@ -24,7 +24,7 @@ class CreateService {
       const campaignDocument = await getDocument({ recordId });
       if (campaignDocument) {
         if (doesTitleExist(campaign.title, campaignDocument)) {
-          return getError("insertById", "Duplicate Object");
+          return getError({ source: "insertById:doesTitleExist" });
         }
 
         campaignDocument.campaigns.push(campaign);
@@ -33,10 +33,10 @@ class CreateService {
         return campaignDocument;
       }
 
-      return getError("insertById", "Invalid Id");
+      return getError({ source: "insertById:campaignDocument" });
     } catch (error) {
       console.error("Error inserting campaign by id:", error);
-      return getError("insertById", "Internal Server Error");
+      return getError({ source: "insertById:caughtError" });
     }
   }
 
@@ -56,11 +56,11 @@ class CreateService {
         const response = await newCampaign.save();
         return response;
       } else {
-        return getError("createCampaign", "Empty Value");
+        return getError({ source: "createCampaign:creatdBy" });
       }
     } catch (error) {
       console.error("Error creating campaign document:", error);
-      return getError("createCampaign", "Internal Server Error");
+      return getError({ source: "createCampaign:caughtError" });
     }
   }
 
@@ -73,13 +73,20 @@ class CreateService {
   async _insertByName(createdBy, campaign) {
     try {
       let campaignDocument = await getDocument({ createdBy });
+
       // If Document with the same creator doesn't exist, create a new Document.
-      if (!campaignDocument) {
+      if (!campaignDocument?.source) {
         campaignDocument = await this._createCampaign(createdBy, campaign);
       }
-      console.log(campaign.title);
+
+      console.log(
+        "---------------------------------------",
+        campaignDocument,
+        "---------------------------------------------"
+      );
+
       if (doesTitleExist(campaign.title, campaignDocument)) {
-        return getError("insertByName", "Duplicate Object");
+        return getError({ source: "insertByName:doesTitleExist" });
       }
 
       campaignDocument.campaigns.push(campaign);
@@ -88,7 +95,7 @@ class CreateService {
       return campaignDocument;
     } catch (error) {
       console.error("Error inserting campaign by name:", error);
-      return getError("insertByName", "Internal Server Error");
+      return getError({ source: "insertByName:caughtError" });
     }
   }
 
@@ -103,7 +110,7 @@ class CreateService {
 
     if (!document) {
       if (createdBy) return await this._insertByName(createdBy, campaign);
-      return getError("insertCampaign", "Invalid Value", recordId || createdBy);
+      return getError({ source: "insertCampaign:insertByName" });
     }
 
     if (recordId) {

@@ -1,4 +1,5 @@
 const getError = require("../errorStore");
+
 const CampaignModel = require("../../models/db/db");
 
 /**
@@ -8,14 +9,18 @@ const CampaignModel = require("../../models/db/db");
 async function getDocument({ recordId, createdBy }) {
   try {
     if (recordId) {
-      return await CampaignModel.findOne({ _id: recordId });
+      const result = await CampaignModel.findOne({ _id: recordId });
+      if (result) return result;
+      return getError({ source: "getDocument:recordId" });
     }
     if (createdBy) {
-      return await CampaignModel.findOne({ createdBy });
+      const result = await CampaignModel.findOne({ createdBy });
+      if (result) return result;
+      return getError({ source: "getDocument:creatdBy" });
     }
   } catch (error) {
     console.error("Error getting campaign document:", error);
-    return getError("getDocument", "Internal Server Error");
+    return getError({ source: "getDocument:caughtError" });
   }
 }
 
@@ -49,32 +54,8 @@ async function getCampaign(recordId, campaignId) {
  * Checks if a title already exists in a given document's campaigns.
  */
 function doesTitleExist(title, document) {
+  console.log(document);
   return document.campaigns.find((element) => element.title === title);
-}
-
-/**
- * Retrieves a campaign by either id or createdBy.
- * @returns {Object} An Object with the retrieved campaign data.
- */
-async function getRecord({ recordId, createdBy }) {
-  try {
-    if (!(recordId || createdBy)) {
-      return getError("getCampaign", "Invalid Parameters");
-    }
-
-    if (recordId) {
-      const response = await CampaignModel.findById(recordId);
-      if (response) return response;
-    } else if (createdBy) {
-      const response = await CampaignModel.findOne({ createdBy });
-      if (response) return response;
-    }
-
-    return getError("getCampaign", "Campaign Not Found");
-  } catch (error) {
-    console.error("Error retrieving campaign:", error);
-    return getError("getCampaign", "Internal Server Error");
-  }
 }
 
 module.exports = { getDocument, doesTitleExist, getCampaign };

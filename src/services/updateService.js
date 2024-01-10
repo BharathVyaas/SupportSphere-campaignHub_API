@@ -27,7 +27,7 @@ class UpdateService {
       return document;
     } catch (error) {
       console.error("Error updating campaign:", error);
-      return getError("updateByRecordId");
+      return getError({ source: "updateByRecordId:caughtError" });
     }
   }
 
@@ -36,7 +36,7 @@ class UpdateService {
     if (recordId && campaignId) {
       return this._updateByRecordId(recordId, campaignId, campaignData);
     } else {
-      return getError("updateCampaign");
+      return getError({ source: "updateCampaign:campaignId" });
     }
   }
 }

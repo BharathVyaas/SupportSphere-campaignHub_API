@@ -1,3 +1,5 @@
+const getError = require("./errorStore");
+
 class ReadService {
   #CampaignModel;
   constructor(CampaignModel) {
@@ -20,7 +22,7 @@ class ReadService {
       return documents;
     } catch (error) {
       console.error("Error retrieving campaign documents:", error);
-      return getError("getCampaignDocuments", "Internal Server Error");
+      return getError({ source: "getCampaignDocument:caughtError" });
     }
   }
 }

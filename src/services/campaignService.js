@@ -56,7 +56,7 @@ class ConcreteCommand {
       }
       default: {
         console.error("Invalid Operation serviceInstance");
-        return result;
+        throw new Error("Invalid Service: ConcreteCommand");
       }
     }
   }
