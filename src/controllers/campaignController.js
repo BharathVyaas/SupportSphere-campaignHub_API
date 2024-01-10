@@ -9,9 +9,9 @@ const { ConcreteCommand } = require("../services/campaignService");
 const serviceInstance = ConcreteCommand.instance;
 
 const DUMMY_DATA = {
-  recordId: "659e027972d8a3099a0b067e",
+  createdBy: "creator",
   campaign: {
-    title: "great title 6",
+    title: "great title 9",
     image: "my_img.jpg",
     raisedAmount: 0,
     targetAmount: 100,
@@ -19,14 +19,19 @@ const DUMMY_DATA = {
 };
 
 const DUMMY_EDIT = {
-  recordId: "659e027972d8a3099a0b067e",
-  campaignId: "659e0dbd96bdb67873085529",
+  recordId: "659e5853cd8f0d091ca3a66e",
+  campaignId: "659e5860bbce80ddfa06bb27",
   campaign: {
-    title: "updated title again",
-    image: "my_beautiful_img.jpg",
+    title: "updated title",
+    image: "beautiful_img.jpg",
     raisedAmount: 0,
     targetAmount: 100,
   },
+};
+
+const DUMMY_DELETE = {
+  recordId: "659e5853cd8f0d091ca3a66e",
+  campaignId: "659e5860bbce80ddfa06bb27",
 };
 
 /**
@@ -56,7 +61,7 @@ const getCampaignListController = async (_, res) => {
 const createCampaignController = async (_, res) => {
   try {
     // Require _id or createdBy to get a Document
-    // Returns a document with _id:string createdBy:string campaigns[]
+    // Returns updated Record
     const result = await serviceInstance.command("create", DUMMY_DATA);
 
     res.status(201).json(result);
@@ -72,6 +77,7 @@ const createCampaignController = async (_, res) => {
  */
 const editCampaignController = async (_, res) => {
   try {
+    // Returns updated record
     const result = await serviceInstance.command("update", DUMMY_EDIT);
 
     res.status(201).json(result);
@@ -81,8 +87,27 @@ const editCampaignController = async (_, res) => {
   }
 };
 
+/**
+ *
+ *  DELETE
+ */
+const deleteCampaignController = async (_, res) => {
+  try {
+    // Requires createdBy to delete all campaigns created by that user
+    // Requires recordId and campaignId to delete one campaign
+    // Returns updated record
+    const result = await serviceInstance.command("delete", DUMMY_DELETE);
+
+    res.status(201).json(result);
+  } catch (err) {
+    console.error("Error deleting campaign or record:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   getCampaignListController,
   createCampaignController,
   editCampaignController,
+  deleteCampaignController,
 };

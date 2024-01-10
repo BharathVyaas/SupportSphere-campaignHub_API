@@ -28,13 +28,9 @@ class CreateService {
         }
 
         campaignDocument.campaigns.push(campaign);
-        const updatedDocument = await campaignDocument.save();
+        await campaignDocument.save();
 
-        return {
-          recordId: campaignDocument._id,
-          createdBy: campaignDocument.createdBy,
-          lastInsertedCampaign: updatedDocument.campaigns.slice(-1)[0],
-        };
+        return campaignDocument;
       }
 
       return getError("insertById", "Invalid Id");
@@ -87,13 +83,9 @@ class CreateService {
       }
 
       campaignDocument.campaigns.push(campaign);
-      const result = await campaignDocument.save();
+      await campaignDocument.save();
 
-      return {
-        recordId: campaignDocument._id,
-        createdBy: campaignDocument.createdBy,
-        lastInsertedCampaign: result.campaigns.slice(-1)[0],
-      };
+      return campaignDocument;
     } catch (error) {
       console.error("Error inserting campaign by name:", error);
       return getError("insertByName", "Internal Server Error");

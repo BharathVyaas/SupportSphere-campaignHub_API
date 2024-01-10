@@ -1,17 +1,16 @@
-const { getDocument, getCampaign } = require("./util/campaignUtil");
+const getError = require("./errorStore");
+
+const { getCampaign } = require("./util/campaignUtil");
 
 class UpdateService {
-  #CampaignModel;
-  constructor(CampaignModel) {
-    this.#CampaignModel = CampaignModel;
-  }
+  constructor(_) {}
 
   async invoke(data) {
     const result = await this.updateCampaign(data);
     return result;
   }
 
-  async updateByRecordId(recordId, campaignId, campaignData) {
+  async _updateByRecordId(recordId, campaignId, campaignData) {
     try {
       const { campaignToUpdate, document } = await getCampaign(
         recordId,
@@ -23,28 +22,21 @@ class UpdateService {
           campaignToUpdate[prop] = campaignData[prop];
         }
       }
-      const result = await document.save();
+      await document.save();
 
-      return result;
+      return document;
     } catch (error) {
       console.error("Error updating campaign:", error);
-      return {
-        type: "updateByRecordId",
-        err: "Internal Server Error",
-        msg: "Error updating campaign document",
-      };
+      return getError("updateByRecordId");
     }
   }
 
   async updateCampaign({ campaign: campaignData, campaignId, recordId }) {
+    // ...
     if (recordId && campaignId) {
-      return this.updateByRecordId(recordId, campaignId, campaignData);
+      return this._updateByRecordId(recordId, campaignId, campaignData);
     } else {
-      return {
-        type: "updateCampaign",
-        error: "Not Enough Data",
-        msg: "required both recordId and campaignId to update a campaign",
-      };
+      return getError("updateCampaign");
     }
   }
 }

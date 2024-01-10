@@ -45,6 +45,24 @@ function getError(from, type, ...rest) {
         error: "Name already exists",
         msg: "Trying to create a duplicate object",
       };
+    case "updateByRecordId":
+      return {
+        type: getType(from, type),
+        err: "Internal Server Error",
+        msg: "Error updating campaign document",
+      };
+    case "updateCampaign":
+      return {
+        type: getType(from, type),
+        error: "Not Enough Data",
+        msg: "required both recordId and campaignId to update a campaign",
+      };
+    case "deleteCampaignById":
+      return {
+        type: getType(from, type),
+        error: "invalid value provided",
+        msg: "couldn't find element with identifier " + rest[0],
+      };
   }
 }
 

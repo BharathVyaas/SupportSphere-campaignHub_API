@@ -3,6 +3,7 @@ const CampaignModel = require("../models/db/db");
 const ReadService = require("./readService");
 const CreateService = require("./createService");
 const UpdateService = require("./updateService");
+const DeleteService = require("./deleteService");
 
 /**
  *
@@ -45,6 +46,11 @@ class ConcreteCommand {
       }
       case "update": {
         const service = new CampaignService(new UpdateService(CampaignModel));
+        const result = await service.invoke(data);
+        return result;
+      }
+      case "delete": {
+        const service = new CampaignService(new DeleteService(CampaignModel));
         const result = await service.invoke(data);
         return result;
       }
