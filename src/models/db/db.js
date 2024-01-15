@@ -30,7 +30,10 @@ const CampaignRecordSchema = new mongoose.Schema({
   createdBy: {
     type: String,
     required: true,
-    unique: true,
+  },
+  fundraisingMethod: {
+    type: String,
+    required: true,
   },
   campaigns: { type: [CampaignSchema], required: true },
 });

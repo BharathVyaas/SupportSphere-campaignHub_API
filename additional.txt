@@ -9,6 +9,7 @@
   },
   body: JSON.stringify({
   createdBy: 'creator',
+  fundraisingMethod: 'Medical Expenses',
   campaign: {
     title: "great title 4",
     image: "my_img.jpg",

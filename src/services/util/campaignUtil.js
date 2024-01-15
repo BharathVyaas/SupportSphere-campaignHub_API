@@ -6,13 +6,14 @@ const CampaignModel = require("../../models/db/db");
  * Retrieves a campaign document by either id or createdBy.
  * @returns {Object} The campaign document.
  */
-async function getDocument({ recordId, createdBy }) {
+async function getDocument({ recordId, createdBy, fundraisingMethod }) {
   try {
     if (recordId) {
       return await CampaignModel.findOne({ _id: recordId });
     }
-    if (createdBy) {
-      return await CampaignModel.findOne({ createdBy });
+
+    if (createdBy && fundraisingMethod) {
+      return await CampaignModel.findOne({ createdBy, fundraisingMethod });
     }
   } catch (error) {
     console.error("Error getting campaign document:", error);

@@ -1,3 +1,5 @@
+// fundraisingMethod is added later
+
 // Utility Imports
 const { getDocument, doesTitleExist } = require("./util/campaignUtil");
 const getError = require("./errorStore");
@@ -43,17 +45,21 @@ class CreateService {
   /**
    * Creates a new campaign document for a given createdBy.
    * @param {string} createdBy - The creator of the campaign document.
+   * @param {string} fundraisingMethod - fundraiser method.
    * @returns {Object} The created campaign document.
    */
-  async _createCampaign(createdBy) {
+  async _createCampaign(createdBy, fundraisingMethod) {
     try {
-      if (createdBy) {
+      if (createdBy && fundraisingMethod) {
         const newCampaign = new this.#CampaignModel({
           createdBy,
+          fundraisingMethod,
           campaigns: [],
         });
 
         const response = await newCampaign.save();
+
+        console.log("====================================", response);
         return response;
       } else {
         return getError({ source: "createCampaign:creatdBy" });
@@ -70,13 +76,20 @@ class CreateService {
    * @param {Object} campaigns - The campaign data to insert.
    * @returns {Object} An Object with createdBy and the last inserted campaign.
    */
-  async _insertByName(createdBy, campaign) {
+  async _insertByName(createdBy, fundraisingMethod, campaign) {
     try {
-      let campaignDocument = await getDocument({ createdBy });
+      let campaignDocument = await getDocument({
+        createdBy,
+        fundraisingMethod,
+      });
 
       // If Document with the same creator doesn't exist, create a new Document.
       if (!campaignDocument || campaignDocument.source) {
-        campaignDocument = await this._createCampaign(createdBy, campaign);
+        campaignDocument = await this._createCampaign(
+          createdBy,
+          fundraisingMethod,
+          campaign
+        );
       }
 
       if (doesTitleExist(campaign.title, campaignDocument)) {
@@ -99,19 +112,25 @@ class CreateService {
    * @param {Object} campaign - The campaign data to insert.
    * @returns {Object} The result of the insertion.
    */
-  async insertCampaign({ campaign, createdBy, recordId }) {
-    const document = await getDocument({ recordId, createdBy });
+  async insertCampaign({ campaign, createdBy, fundraisingMethod, recordId }) {
+    const document = await getDocument({
+      recordId,
+      createdBy,
+      fundraisingMethod,
+    });
 
     if (!document) {
-      if (createdBy) return await this._insertByName(createdBy, campaign);
+      if (createdBy && fundraisingMethod)
+        return await this._insertByName(createdBy, fundraisingMethod, campaign);
       return getError({ source: "insertCampaign:insertByName" });
     }
 
     if (recordId) {
       return this._insertById(recordId, campaign);
-    } else if (createdBy) {
-      return this._insertByName(createdBy, campaign);
+    } else if (createdBy && fundraisingMethod) {
+      return this._insertByName(createdBy, fundraisingMethod, campaign);
     }
+    throw new Error("createService:insertCampaign");
   }
 }
 

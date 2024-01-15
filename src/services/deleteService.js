@@ -1,3 +1,5 @@
+// fundraisingMethod property is added after level 1
+
 const getError = require("./errorStore");
 
 class DeleteService {
@@ -11,9 +13,12 @@ class DeleteService {
     return result;
   }
 
-  async _deleteDocument(createdBy) {
+  async _deleteDocument(createdBy, fundraisingMethod) {
     try {
-      const result = await this.#campaignModel.findOneAndDelete({ createdBy });
+      const result = await this.#campaignModel.findOneAndDelete({
+        createdBy,
+        fundraisingMethod,
+      });
 
       return result;
     } catch (error) {
@@ -39,13 +44,38 @@ class DeleteService {
     }
   }
 
-  async deleteCampaign({ recordId, createdBy, campaignId }) {
-    if (createdBy && !campaignId) {
-      return await this._deleteDocument(createdBy);
+  // Created After level 1
+  async _deleteFundraisingMethod(fundraisingMethod) {
+    try {
+      const list = await this.#campaignModel.find({
+        fundraisingMethod,
+      });
+
+      list.map(async (method) => {
+        await this.#campaignModel.findOneAndDelete({
+          _id: method._id,
+        });
+      });
+
+      return list;
+    } catch (err) {
+      console.error("Must Add Error Handling For _deleteFundraisingMethod");
+      throw new Error("_deleteFundraisingMethod(fundraisingMethod)", err);
+    }
+  }
+
+  async deleteCampaign({ recordId, createdBy, fundraisingMethod, campaignId }) {
+    if (createdBy && fundraisingMethod && !campaignId) {
+      return await this._deleteDocument(createdBy, fundraisingMethod);
     }
 
     if (recordId && campaignId) {
       const result = await this._deleteCampaignById(recordId, campaignId);
+      return result;
+    }
+
+    if (fundraisingMethod) {
+      const result = await this._deleteFundraisingMethod(fundraisingMethod);
       return result;
     }
     return getError({ source: "deleteCampaign:campaignId" });
