@@ -13,7 +13,6 @@ class ReadService {
 
   async _getCampaignByMethod(fundraisingMethod) {
     try {
-      console.log("check 2", fundraisingMethod);
       if (fundraisingMethod) {
         const result = await this.#CampaignModel.find({ fundraisingMethod });
 
@@ -43,7 +42,6 @@ class ReadService {
   async getDocument({ fundraisingMethod }) {
     try {
       if (fundraisingMethod) {
-        console.log("check 1", fundraisingMethod);
         return await this._getCampaignByMethod(fundraisingMethod);
       }
 

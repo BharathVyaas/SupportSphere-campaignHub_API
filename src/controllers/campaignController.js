@@ -66,7 +66,7 @@ const createCampaignController = async (_, res) => {
   try {
     // Require _id or createdBy to get a Document
     // Returns updated Record
-    const result = await serviceInstance.command("create", DUMMY_CREATE);
+    const result = await serviceInstance.command("create", req.body);
 
     res.status(201).json(result);
   } catch (err) {
@@ -111,9 +111,29 @@ const deleteCampaignController = async (_, res) => {
   }
 };
 
+const getCampaignMethodListController = async (req, res) => {
+  try {
+    const campaignList = await serviceInstance.command(
+      "read",
+      req.params.method
+    );
+
+    const result = [];
+
+    campaignList.map((document) => result.push(...document.campaigns));
+
+    res.status(201).json(result);
+  } catch (err) {
+    console.error("Error deleting campaign or record:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   getCampaignListController,
   createCampaignController,
   editCampaignController,
   deleteCampaignController,
+  // ...
+  getCampaignMethodListController,
 };
