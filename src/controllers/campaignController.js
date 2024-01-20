@@ -14,9 +14,9 @@ const DUMMY_GET = {
 
 const DUMMY_CREATE = {
   createdBy: "creator",
-  fundraisingMethod: "Medical Expenses",
+  fundraisingMethod: "medicalExpenses",
   campaign: {
-    title: "great title 5",
+    title: "great title 10",
     image: "my_img.jpg",
     raisedAmount: 0,
     targetAmount: 100,
@@ -47,7 +47,7 @@ const DUMMY_DELETE = {
 const getCampaignListController = async (_, res) => {
   try {
     // Returns campaignhub_db/campaigns document
-    const campaignList = await serviceInstance.command("read", DUMMY_GET);
+    const campaignList = await serviceInstance.command("read", {});
 
     res.status(200).json(campaignList);
   } catch (err) {
@@ -62,7 +62,7 @@ const getCampaignListController = async (_, res) => {
  */
 
 // Controller for creating a new campaign
-const createCampaignController = async (_, res) => {
+const createCampaignController = async (req, res) => {
   try {
     // Require _id or createdBy to get a Document
     // Returns updated Record
@@ -111,12 +111,15 @@ const deleteCampaignController = async (_, res) => {
   }
 };
 
+/**
+ *
+ *
+ */
 const getCampaignMethodListController = async (req, res) => {
   try {
-    const campaignList = await serviceInstance.command(
-      "read",
-      req.params.method
-    );
+    // Returns array of campaigns with method of req.params.method ex method: medicalExpenses
+    // req.params.method must be in camelCase.
+    const campaignList = await serviceInstance.command("read", req.params);
 
     const result = [];
 

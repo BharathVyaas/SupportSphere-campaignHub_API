@@ -4,13 +4,13 @@ const campaignController = require("../controllers/campaignController");
 
 const router = express.Router();
 
-// sends campaignHub document
-router.get("/view-campaigns", campaignController.getCampaignListController);
-
 router.get(
-  "/view-campaigns:method",
+  "/view-campaigns/:method",
   campaignController.getCampaignMethodListController
 );
+
+// sends campaignHub document
+router.get("/view-campaigns", campaignController.getCampaignListController);
 
 // creates a new campaign in database with {createdBy: created user, campaign: [{campaign related details}]}
 router.post("/create-campaign", campaignController.createCampaignController);

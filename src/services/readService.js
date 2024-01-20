@@ -8,6 +8,7 @@ class ReadService {
 
   async invoke(data) {
     const result = this.getDocument(data);
+    console.log("invoke:", data);
     return result;
   }
 
@@ -39,12 +40,14 @@ class ReadService {
     }
   }
 
-  async getDocument({ fundraisingMethod }) {
+  // fundraisingMehod should be in camelCase
+  async getDocument(data) {
     try {
+      const fundraisingMethod = data.method;
       if (fundraisingMethod) {
         return await this._getCampaignByMethod(fundraisingMethod);
       }
-
+      console.log("getDocument:", fundraisingMethod);
       return await this._getCampaignDocument();
     } catch (err) {
       throw new Error("getDocument: Must be implimented", err);
